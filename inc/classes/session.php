@@ -2,16 +2,7 @@
 class session implements \SessionHandlerInterface {
 
     public function __construct() {
-      session_set_save_handler(
-            array(&$this, 'open'),
-            array(&$this, 'close'),
-            array(&$this, 'read'),
-            array(&$this, 'write'),
-            array(&$this, 'destroy'),
-            array(&$this, 'gc')
-        );
       session_start();
-      register_shutdown_function('session_write_close');
     }
 
     public function open($savePath, $session_name) {
@@ -26,10 +17,7 @@ class session implements \SessionHandlerInterface {
       return true;
     }
 
-    public function close()
-    {
-        return true;
-    }
+    public function close() {return false;}
 
     public function read($id)
     {
@@ -54,8 +42,12 @@ class session implements \SessionHandlerInterface {
                   ON DUPLICATE KEY UPDATE session_data = :data");
       $db->bind(':id',$id);
       $db->bind(':data',$data);
-      $db->execute();
-      //session_write_close();
+      try {
+        $db->execute();
+      } catch (Exception $e) {
+        return returnError("Database error: ".$e->getMessage());
+      }
+      
     }
 
     public function destroy($id) {
@@ -70,7 +62,7 @@ class session implements \SessionHandlerInterface {
       $db = new database();
       $db->query("DELETE FROM tbl_session
                   WHERE session_lastaccesstime < DATE_SUB(NOW(),
-                  INTERVAL " . $lifetime . " SECOND)");
+                  INTERVAL " . $maxlifetime . " SECOND)");
       $db->execute();
       return true;
     }
