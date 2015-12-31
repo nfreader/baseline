@@ -12,8 +12,7 @@
           }
           ?>
         </p>
-        <?php 
-
+        <?php
         if(DEBUG) {
         echo "<hr><p><strong>Debug info</strong>";
           echo "<div class='row'><div class='col-md-4'>GET";
@@ -25,11 +24,15 @@
           echo "</div></div>";
         echo "</p>";
         }
-
         ?>
       </footer>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <?php if (isset($changeURL) && $changeURL) :?>
+    <script>
+      window.history.pushState("", "Index", "<?php echo APP_URL;?>/index.php");
+    </script>
+    <?php endif;?>
   </body>
 </html>

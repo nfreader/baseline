@@ -2,7 +2,7 @@
   require_once('inc/bootstrap.php');
   $user = new user();
   if(isset($_GET['action'])) {
-    require_once('action.php'); 
+    require_once('action.php');
   }
   if (DEBUG){
     $time = explode(' ', microtime());
@@ -24,17 +24,21 @@
 
      <style>
       body {
-        padding-top: 60px; 
+        padding-top: 60px;
       }
       form.register .checkbox {
         display: none;
-      } 
+      }
+      .label {
+        font-size: inherit;
+      }
     </style>
   </head>
   <body>
   <?php require_once('view/nav.php'); ?>
     <div class="container">
-    <?php 
+
+    <?php
     if (!empty($alert)) {
       echo $alert;
     }

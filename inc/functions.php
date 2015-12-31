@@ -68,7 +68,7 @@ function pick($list) {
  *
  * @return (mixed) Returns an error message formatted as specified by the
  * application.
- * 
+ *
  */
 
 function returnError($msg) {
@@ -84,7 +84,7 @@ function returnError($msg) {
  *
  * @return (mixed) Returns a message formatted as specified by the
  * application.
- * 
+ *
  */
 
 function returnMessage($msg) {
@@ -100,7 +100,7 @@ function returnMessage($msg) {
  *
  * @return (mixed) Returns a success message formatted as specified by the
  * application.
- * 
+ *
  */
 
 function returnSuccess($msg) {
@@ -117,7 +117,7 @@ return json_encode(array('message'=>$msg,'level'=>1),JSON_FLAGS);
  * Defaults to 'ago' (or 'just now' if the date is within 30 seconds from now)
  *
  * @return (string) A relative date
- * 
+ *
  */
 
 function relativeTime($date, $postfix = 'ago') {
@@ -155,13 +155,13 @@ function relativeTime($date, $postfix = 'ago') {
  * timeStamp
  *
  * Returns the HTML for a relative timestamp with a 'title' attribute that
- * gives the actual time. 
+ * gives the actual time.
  *
  * @param $date (string) The date in question
  *
  * @return (string) (HTML) The HTML with the relative timestamp visible and the
  * actual date added as a title attribute
- * 
+ *
  */
 
 function timestamp($date) {
@@ -184,7 +184,7 @@ function alert($msg) {
       $level = 'success';
     break;
 
-    case 2:
+    case 0:
       $level = 'danger';
     break;
   }

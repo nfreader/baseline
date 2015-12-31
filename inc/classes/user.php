@@ -17,10 +17,12 @@ class user {
     if (null == $uid){
       if (isset($_SESSION['uid'])){
         $user = $this->getUser($_SESSION['uid']);
+        $user = $this->formatUser($user);
         $this->username = $user->username;
         $this->uid = $user->uid;
         $this->status = $user->status;
         $this->rank = $user->rank;
+        $this->userlabel = $user->userlabel;
       }
     } else {
       $user = $this->getUser($uid);
@@ -77,6 +79,7 @@ class user {
     } else {
       $return = returnSuccess("Your account has been created but is awaiting activation.");
     }
+
     if(1 == $db->countRows('tbl_user')) {
       $db->query("SELECT uid FROM tbl_user WHERE username = ?");
       $db->bind(1,$username);
@@ -127,7 +130,7 @@ class user {
         $this->uid = $login->uid;
         $this->rank = $login->rank;
         $app = new app();
-        $app->logEvent("LI","Logged in as $this->username");
+        $app->logEvent("LI","$this->username logged in");
         return returnSuccess("You are now logged in as $this->username");
 
       }
@@ -179,28 +182,40 @@ class user {
     return false;
   }
 
-  public function activateUser() {
+  public function activateUser($uid) {
+    $user = $this->getUser($uid);
+    if ($user->uid == $this->uid){
+      return returnError("You can't activate yourself.");
+    }
     $db = new database();
     $db->query("UPDATE tbl_user SET status = 1 WHERE uid = ?");
-    $db->bind(1,$this->uid);
+    $db->bind(1,$user->uid);
     try {
       $db->execute();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return returnSuccess("$this->username's acount has been activated");
+    $app = new app();
+    $app->logEvent("AU","Activated $user->username ($user->uid)");
+    return returnSuccess("$user->username's acount has been activated");
   }
 
-  public function deactivateUser() {
+  public function deactivateUser($uid) {
+    $user = $this->getUser($uid);
+    if ($user->uid == $this->uid){
+      return returnError("You can't deactivate yourself.");
+    }
     $db = new database();
-    $db->query("UPDATE tbl_user SET status = 1 WHERE uid = ?");
-    $db->bind(1,$this->uid);
+    $db->query("UPDATE tbl_user SET status = 0 WHERE uid = ?");
+    $db->bind(1,$user->uid);
     try {
       $db->execute();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return returnSuccess("$this->username's acount has been deactivated");
+    $app = new app();
+    $app->logEvent("DU","Dectivated $user->username ($user->uid)");
+    return returnSuccess("$user->username's acount has been deactivated");
   }
 
   public function getUserByUID($uid) {}
@@ -258,9 +273,9 @@ class user {
     $user->rankname = $rank;
     $user->createdlabel = timestamp($user->created);
     if ($user->status) {
-      $user->statusLink = "Active <a href='?action=deactivateUser&user=$user->uid'><i class='fa fa-times'></i></a>";
+      $user->statusLink = "Active <a class='btn btn-xs btn-danger' href='?action=deactivateUser&user=$user->uid'><i class='fa fa-times'></i></a>";
     } else {
-      $user->statusLink = "Awaiting activation <a href='?action=activateUser&user=$user->uid'><i class='fa fa-check'></i></a>";
+      $user->statusLink = "Awaiting activation <a class='btn btn-xs btn-success' href='?action=activateUser&user=$user->uid'><i class='fa fa-check'></i></a>";
     }
     return $user;
   }

@@ -1,8 +1,17 @@
 <?php
-require_once('inc/bootstrap.php');
+require_once('../inc/bootstrap.php');
 if (!DEBUG){
   die("DEBUG MODE MUST BE ENABLED. THIS TEST WILL DESTROY DATA!!");
 }
+
+$db = new database();
+$db->query("TRUNCATE tbl_user; TRUNCATE tbl_session; TRUNCATE tbl_log;");
+try {
+  $db->execute();
+} catch (Exception $e) {
+  return array("Database error: ".$e->getMessage(),1);
+}
+
 $user = new user();
 $json = $user->register('First User','test@test.test','test','test');
 //Pass, activate, make admin
@@ -95,10 +104,9 @@ $json = str_replace('}{','},{',"[$json]");
 if (RETURN_JSON){
   var_dump($json);
 } else {
-  var_dump(json_decode($json)); 
+  var_dump(json_decode($json));
 }
 
-$db = new database();
 $db->query("TRUNCATE tbl_user; TRUNCATE tbl_session; TRUNCATE tbl_log;");
 try {
   $db->execute();
