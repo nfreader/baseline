@@ -61,4 +61,22 @@ class app {
     return $return;
   }
 
+  public function getLogs($offset=0, $count=PER_PAGE) {
+    $db = new database();
+    $db->query("SELECT tbl_log.*, tbl_user.*
+      FROM tbl_log
+      LEFT JOIN tbl_user ON tbl_log.who = tbl_user.uid
+      LIMIT $offset, $count");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $logs = new stdclass();
+    $logs->logs = $db->resultset();
+    $count = $db->countRows('tbl_log');
+    $logs->total = $count;
+    return $logs;
+  }
+
 }

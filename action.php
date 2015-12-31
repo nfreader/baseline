@@ -61,12 +61,22 @@ if (!$user->isLoggedIn()){
     } else {
       $msg = returnError("Access denied");
     }
+    $changeURL = TRUE;
     break;
 
     case 'deactivateUser':
     if($user->isAdmin()){
       $msg = $user->deactivateUser($_GET['user']);
       $include = 'admin/userList';
+    } else {
+      $msg = returnError("Access denied");
+    }
+    $changeURL = TRUE;
+    break;
+
+    case 'viewLogs':
+    if($user->isAdmin()){
+      $include = 'admin/viewLogs';
     } else {
       $msg = returnError("Access denied");
     }

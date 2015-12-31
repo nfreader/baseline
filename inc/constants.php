@@ -9,3 +9,5 @@ define('RETURN_JSON',FALSE);
 define('LOG_EVENT_IPS',TRUE);
 
 define('DATE_FORMAT','l jS \of F Y h:i:s A');
+
+define('PER_PAGE',30);
