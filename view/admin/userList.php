@@ -27,7 +27,7 @@ $users = $user->getUserList();
     <tr>
       <td><?php echo $userRow->uid;?></td>
       <td><?php echo $userRow->userlabel;?></td>
-      <td><?php echo $userRow->statusLink;?></td>
+      <td><?php echo $userRow->statuslink;?></td>
       <td><?php echo $userRow->rankname;?></td>
       <td><?php echo $userRow->email;?></td>
       <td><?php echo $userRow->createdlabel;?></td>

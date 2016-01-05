@@ -81,6 +81,10 @@ if (!$user->isLoggedIn()){
       $msg = returnError("Access denied");
     }
     break;
+
+    case 'viewUser':
+      $include = 'viewUser';
+    break;
   }
 }
 $msg = str_replace('}{','},{',"[$msg]");

@@ -7,31 +7,25 @@ class user {
   public $status;
   public $rank;
   public $userlabel;
+  public $statuslink;
+  public $createdlabel;
 
   public function __construct($uid=null) {
-    $this->username = null;
-    $this->uid = null;
-    $this->status = null;
-    $this->rank = null;
 
-    if (null == $uid){
-      if (isset($_SESSION['uid'])){
+    if (isset($_SESSION['uid'])||$uid) {
+      if ($uid){
+        $user = $this->getUser($uid);
+      } else {
         $user = $this->getUser($_SESSION['uid']);
-        $user = $this->formatUser($user);
-        $this->username = $user->username;
-        $this->uid = $user->uid;
-        $this->status = $user->status;
-        $this->rank = $user->rank;
-        $this->userlabel = $user->userlabel;
       }
-    } else {
-      $user = $this->getUser($uid);
       $user = $this->formatUser($user);
       $this->username = $user->username;
       $this->uid = $user->uid;
       $this->status = $user->status;
       $this->rank = $user->rank;
       $this->userlabel = $user->userlabel;
+      $this->statuslink = $user->statuslink;
+      $this->createdLabel = $user->createdlabel; 
     }
   }
 
@@ -268,14 +262,14 @@ class user {
         $rank = 'Admin';
       break;
     }
-    $user->userlabel = "<a class='label label-$class' href='action=";
+    $user->userlabel = "<a class='label label-$class' href='?action=";
     $user->userlabel.= "viewUser&user=$user->uid'>$user->username</a>";
     $user->rankname = $rank;
     $user->createdlabel = timestamp($user->created);
     if ($user->status) {
-      $user->statusLink = "Active <a class='btn btn-xs btn-danger' href='?action=deactivateUser&user=$user->uid'><i class='fa fa-times'></i></a>";
+      $user->statuslink = "Active <a class='btn btn-xs btn-danger' href='?action=deactivateUser&user=$user->uid'><i class='fa fa-times'></i></a>";
     } else {
-      $user->statusLink = "Awaiting activation <a class='btn btn-xs btn-success' href='?action=activateUser&user=$user->uid'><i class='fa fa-check'></i></a>";
+      $user->statuslink = "Awaiting activation <a class='btn btn-xs btn-success' href='?action=activateUser&user=$user->uid'><i class='fa fa-check'></i></a>";
     }
     return $user;
   }
