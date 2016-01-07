@@ -30,4 +30,4 @@ require_once('config.php');
 require_once('functions.php');
 require_once('app-functions.php');
 
-session_set_save_handler(new session(), true);
+session_start();
