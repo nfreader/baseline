@@ -18,10 +18,12 @@ class user {
         $user = $this->getUser($uid);
       } else {
         $user = $this->getUser($_SESSION['uid']);
+        if (!$user) {
+          $_SESSION = null;
+          session_destroy();
+        }
       }
-      if (!$user) {
-        $this->logout();
-      }
+
       $user = $this->formatUser($user);
       $this->username = $user->username;
       $this->uid = $user->uid;
@@ -171,10 +173,6 @@ class user {
   public function logout() {
     $app = new app();
     $app->logEvent("LO","$this->username logged out");
-    $this->username = null;
-    $this->uid = null;
-    $this->status = null;
-    $this->rank = null;
     $_SESSION = null;
     session_destroy();
     return returnSuccess("You have logged out");
