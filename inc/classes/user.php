@@ -19,6 +19,9 @@ class user {
       } else {
         $user = $this->getUser($_SESSION['uid']);
       }
+      if (!$user) {
+        $this->logout();
+      }
       $user = $this->formatUser($user);
       $this->username = $user->username;
       $this->uid = $user->uid;
@@ -212,7 +215,7 @@ class user {
 
   public function activateUser($uid) {
     $user = $this->getUser($uid);
-    if ($user->uid == $this->uid){
+    if ($user->uid == $this->uid && !DEBUG){
       return returnError("You can't activate yourself.");
     }
     $db = new database();

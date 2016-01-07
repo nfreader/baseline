@@ -6,5 +6,4 @@ define('DB_USER', 'CHANGEME');
 define('DB_PASS', 'CHANGEME');
 define('DB_HOST', 'localhost');//Probably won't need to change
 
-define('TBL_PREFIX', 'CHANGEME_');
-
+define('TBL_PREFIX', 'CHANGEME');

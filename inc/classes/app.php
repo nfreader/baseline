@@ -5,19 +5,32 @@ class app {
   public $app_name;
 
   public function __construct() {
-    if (DEBUG){
-      $this->app_name = APP_NAME." (DEBUG MODE)";
-    } else {
-      $this->app_name = APP_NAME;
-    }
+    $this->app_name = APP_NAME;
   }
 
   public function isInstalled(){
     clearstatcache();
-    if (file_exists(ABSPATH.'inc/config.php')) {
+    if (file_exists(ABSPATH.'inc/config.php') &&
+    file_exists(ABSPATH.'inc/app-constants.php')) {
       return TRUE;
     }
     return FALSE;
+  }
+
+  public function isDatabaseInstalled() {
+    clearstatcache();
+    if (file_exists(ABSPATH.'inc/dbinstalled.lck')) {
+      return TRUE;
+    } else {
+      $db = new database();
+      $db->query("SHOW TABLES LIKE ".TBL_PREFIX."user");
+      try {
+        $db->execute();
+      } catch (Exception $e) {
+        $this->attemptToInstall();
+      }
+      return true;
+    }
   }
 
   public function logEvent($what, $data) {
@@ -85,6 +98,25 @@ class app {
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->resultset();
+  }
+
+  public function attemptToInstall() {
+    require_once('../install/sql.php');
+    $db = new database();
+    $db->query($sql);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $lockfile = 'inc/dbinstalled.lck';
+    clearstatcache();
+    if (file_exists(ABSPATH.'inc/dbinstalled.lck')) {
+      unlink($lockfile);
+    }
+    $handle = fopen(ABSPATH.$lockfile, 'w') or die('Cannot open file:  '.$lockfile);
+    fwrite($handle,date(DATE_FORMAT));
+    fclose();
   }
 
 }
