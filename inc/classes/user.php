@@ -9,8 +9,9 @@ class user {
   public $userlabel;
   public $statuslink;
   public $createdlabel;
+  public $logs;
 
-  public function __construct($uid=null) {
+  public function __construct($uid=null,$extended=false) {
 
     if (isset($_SESSION['uid'])||$uid) {
       if ($uid){
@@ -25,8 +26,41 @@ class user {
       $this->rank = $user->rank;
       $this->userlabel = $user->userlabel;
       $this->statuslink = $user->statuslink;
-      $this->createdLabel = $user->createdlabel; 
+      $this->createdlabel = $user->createdlabel;
+
+      if ($extended) {
+        $app = new app;
+        $this->logs = $app->getUserLogSample($this->uid);
+      }
     }
+  }
+
+  public function formatUser(&$user){
+    switch($user->rank){
+      case 'U':
+      default:
+        $class = 'info';
+        $rank = 'User';
+      break;
+      case 'M':
+        $class = 'success';
+        $rank = 'Moderator';
+      break;
+      case 'A':
+        $class = 'danger';
+        $rank = 'Admin';
+      break;
+    }
+    $user->userlabel = "<a class='label label-$class' href='?action=";
+    $user->userlabel.= "viewUser&user=$user->uid'>$user->username</a>";
+    $user->rankname = $rank;
+    $user->createdlabel = timestamp($user->created);
+    if ($user->status) {
+      $user->statuslink = "<span class='label label-success'>Active</span> <a class='btn btn-xs btn-danger' href='?action=deactivateUser&user=$user->uid'><i class='fa fa-times'></i></a>";
+    } else {
+      $user->statuslink = "<span class='label label-danger'>Inactive</span> <a class='btn btn-xs btn-success' href='?action=activateUser&user=$user->uid'><i class='fa fa-check'></i></a>";
+    }
+    return $user;
   }
 
   public function register($username, $email, $password, $password2) {
@@ -244,34 +278,6 @@ class user {
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->single();
-  }
-
-  public function formatUser(&$user){
-    switch($user->rank){
-      case 'U':
-      default:
-        $class = 'info';
-        $rank = 'User';
-      break;
-      case 'M':
-        $class = 'success';
-        $rank = 'Moderator';
-      break;
-      case 'A':
-        $class = 'danger';
-        $rank = 'Admin';
-      break;
-    }
-    $user->userlabel = "<a class='label label-$class' href='?action=";
-    $user->userlabel.= "viewUser&user=$user->uid'>$user->username</a>";
-    $user->rankname = $rank;
-    $user->createdlabel = timestamp($user->created);
-    if ($user->status) {
-      $user->statuslink = "Active <a class='btn btn-xs btn-danger' href='?action=deactivateUser&user=$user->uid'><i class='fa fa-times'></i></a>";
-    } else {
-      $user->statuslink = "Awaiting activation <a class='btn btn-xs btn-success' href='?action=activateUser&user=$user->uid'><i class='fa fa-check'></i></a>";
-    }
-    return $user;
   }
 
 }

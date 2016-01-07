@@ -18,7 +18,7 @@ $users = $user->getUserList();
       <th>Status</th>
       <th>Rank</th>
       <th>Email</th>
-      <th>Registered</th>
+      <th>Joined</th>
     </tr>
   </thead>
   <tbody>

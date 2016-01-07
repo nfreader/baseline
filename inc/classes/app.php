@@ -54,13 +54,6 @@ class app {
     mail($to, $subject, $msgheader.$message.$msgfooter, $headers, $from);
   }
 
-  public function returnTest(){
-    $return = returnSuccess('Success message');
-    $return.= returnMessage('Regular message');
-    $return.= returnError('Error message');
-    return $return;
-  }
-
   public function getLogs($offset=0, $count=PER_PAGE) {
     $db = new database();
     $db->query("SELECT tbl_log.*, tbl_user.*
@@ -77,6 +70,21 @@ class app {
     $count = $db->countRows('tbl_log');
     $logs->total = $count;
     return $logs;
+  }
+
+  public function getUserLogSample($uid) {
+    $db = new database();
+    $db->query("SELECT tbl_log.*
+      FROM tbl_log
+      WHERE who = ?
+      LIMIT 0, 5");
+    $db->bind(1,$uid);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
   }
 
 }
