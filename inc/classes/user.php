@@ -158,6 +158,7 @@ class user {
         return returnMessage("Your account is awaiting activation. Please try again at a later time.");
       } else {
         $_SESSION['uid'] = $login->uid;
+        $_SESSION['app'] = APP_NAME;
         $this->username = $login->username;
         $this->status = $login->status;
         $this->uid = $login->uid;
@@ -205,7 +206,7 @@ class user {
   }
 
   public function isLoggedIn(){
-    if ($this->status && NULL != $this->uid){
+    if ($this->status && NULL != $this->uid && APP_NAME === $_SESSION['app']){
       return true;
     }
     return false;
